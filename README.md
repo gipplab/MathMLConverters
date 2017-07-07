@@ -1,6 +1,6 @@
 # MathML Converters
 
-[![Build Status](https://travis-ci.org/ag-gipp/MathMLConverters.svg?branch=master)](https://travis-ci.org/ag-gipp/MathMLSim)
+[![Build Status](https://travis-ci.org/ag-gipp/MathMLConverters.svg?branch=master)](https://travis-ci.org/ag-gipp/MathMLConverters)
 
 This library is a collection of utilities and service calls to convert from various input formats to MathML.
 The desired MathML output is always a well-formed MathML containing the presentation and content semantic. 
