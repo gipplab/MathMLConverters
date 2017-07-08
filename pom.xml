@@ -41,12 +41,23 @@
         <jackson.version>2.8.6</jackson.version>
     </properties>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <dependencies>
         <!-- basic mathml classes -->
         <dependency>
             <groupId>com.formulasearchengine</groupId>
             <artifactId>mathmltools</artifactId>
-            <version>0.3.0-SNAPSHOT</version>
+            <version>0.3.0</version>
         </dependency>
         <!-- Canonicalizer for mathematical formulas -->
         <dependency>
