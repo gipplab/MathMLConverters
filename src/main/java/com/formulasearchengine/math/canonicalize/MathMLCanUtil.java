@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Prepares the {@link MathMLCanonicalizer} based on our custom configuration.
- * This purely a utility class and therefore has no public constructur.
+ * This is purely a utility class and therefore has no public constructor.
  *
  * @author Vincent Stange
  */
