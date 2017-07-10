@@ -44,7 +44,7 @@ public class LaTeXMLConverterTest {
      * Test works with http://gw125.iu.xsede.org:8888
      */
     @Test
-//    @Ignore("external service needs to be running or be available")
+    @Ignore("external service needs to be running or be available")
     public void convertLatexmlService() throws Exception {
         // local configuration for the test in json (with DRMF stylesheet)
         String config = "{\n" +

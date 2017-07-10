@@ -37,7 +37,7 @@ public class MathMLConverterTest {
     }
 
     @Test
-//    @Ignore("need latexml service")
+    @Ignore("need latexml service")
     public void transform_latex_1() throws Exception, MathConverterException {
         // prepare configuration and objects
         Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_1.txt"), false);
