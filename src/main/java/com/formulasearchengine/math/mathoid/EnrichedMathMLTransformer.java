@@ -9,8 +9,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 
@@ -40,19 +38,6 @@ public class EnrichedMathMLTransformer {
      */
     public EnrichedMathMLTransformer(String eMathML) {
         readDocument = XMLHelper.string2Doc(eMathML, false);
-    }
-
-    /**
-     * Only transforms the current document to Content MathML.
-     * This alters the used document.
-     *
-     * @return String of the previous Content MathML
-     * @throws TransformerException         malformed xml most likely
-     * @throws ParserConfigurationException Saxon Exception?
-     */
-    public String transformToCMML() throws TransformerException, ParserConfigurationException {
-        Document document = XMLHelper.xslTransform(readDocument, XSL);
-        return XMLHelper.printDocument(document.getFirstChild());
     }
 
     /**
@@ -114,7 +99,7 @@ public class EnrichedMathMLTransformer {
      *
      * @param readNode element to change
      */
-    private void copyIdField(Element readNode) {
+    void copyIdField(Element readNode) {
         String newId = readNode.getAttribute("data-semantic-id");
         if (!StringUtils.isEmpty(newId)) {
             readNode.setAttribute("id", "p" + newId);

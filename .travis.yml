@@ -9,4 +9,4 @@ install:
   - mvn install -DskipTests=true -q
 
 after_success:
-  - mvn cobertura:cobertura coveralls:report
+  - mvn clean test jacoco:report coveralls:report
