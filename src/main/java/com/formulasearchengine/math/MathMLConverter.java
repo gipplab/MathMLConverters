@@ -60,7 +60,7 @@ public class MathMLConverter {
         this.config = config;
     }
 
-    public MathMLConverter() {
+    MathMLConverter() {
         this.xPath = XPathFactory.newInstance().newXPath(); // XMLHelper.namespaceAwareXpath("d", DEFAULT_NAMESPACE);
     }
 
@@ -109,10 +109,11 @@ public class MathMLConverter {
     String verifyMathML(String canMathML) throws MathConverterException {
         try {
             Document tempDoc = XMLHelper.string2Doc(canMathML, false);
-            if (scanFormulaNode((Element) tempDoc.getFirstChild()) == Content.mathml) {
+            Content content = scanFormulaNode((Element) tempDoc.getFirstChild());
+            if (content == Content.mathml) {
                 return canMathML;
             } else {
-                throw new MathConverterException("could not verify produced mathml");
+                throw new MathConverterException("could not verify produced mathml, content was: " + content.name());
             }
         } catch (Exception e) {
             logger.error("could not verify mathml", e);

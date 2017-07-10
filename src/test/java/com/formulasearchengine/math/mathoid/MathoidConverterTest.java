@@ -14,6 +14,8 @@ import static org.junit.Assert.assertThat;
  */
 public class MathoidConverterTest {
 
+    public static final String HTTP_MATHOID_TEXT = "http://localhost:10044/mml";
+
     @Test
     @Ignore("external service needs to be running or be available")
     public void convertMathML() throws Exception {
@@ -32,8 +34,16 @@ public class MathoidConverterTest {
         assertThat(actual, is(expected));
     }
 
+    @Test
+    public void testConfig() {
+        // simple object check
+        MathoidConfig config = createTestConfig();
+        assertThat(config.isActive(), is(true));
+        assertThat(config.getUrl(), is(HTTP_MATHOID_TEXT));
+    }
+
     private MathoidConfig createTestConfig() {
-        return new MathoidConfig().setActive(true).setUrl("http://localhost:10044/mml");
+        return new MathoidConfig().setActive(true).setUrl(HTTP_MATHOID_TEXT);
     }
 
     private String getResourceContent(String resourceFilename) throws IOException {

@@ -1,7 +1,9 @@
 package com.formulasearchengine.math;
 
+import com.formulasearchengine.math.latexml.LaTeXMLConverterTest;
 import com.formulasearchengine.math.latexml.LateXMLConfig;
 import com.formulasearchengine.math.mathoid.MathoidConfig;
+import com.formulasearchengine.math.mathoid.MathoidConverterTest;
 import com.formulasearchengine.math.util.MathConverterException;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import org.apache.commons.io.IOUtils;
@@ -13,6 +15,7 @@ import org.w3c.dom.Element;
 import java.io.IOException;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 import static org.junit.Assert.assertThat;
 
@@ -24,26 +27,35 @@ public class MathMLConverterTest {
     @Test
     @Ignore("need external services")
     public void convertPmml() throws Exception, MathConverterException {
+        // prepare configuration and objects
         Document mathNode = XMLHelper.string2Doc(getResourceContent("mathml_pmml.txt"), false);
-        MathMLConverter mathMLConverter = new MathMLConverter(new MathMLConverterConfig().setMathoid(new MathoidConfig().setActive(true).setUrl("http://localhost:10044/mml")));
+        MathMLConverterConfig mathConfig = new MathMLConverterConfig().setMathoid(new MathoidConfig().setActive(true).setUrl(MathoidConverterTest.HTTP_MATHOID_TEXT));
+        MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
+        // test
         String result = mathMLConverter.convertPmml((Element) mathNode.getFirstChild());
         assertThat(result, is(getResourceContent("mathml_pmml_expected.txt")));
     }
 
     @Test
-    @Ignore("need latexml installation")
+//    @Ignore("need latexml service")
     public void transform_latex_1() throws Exception, MathConverterException {
+        // prepare configuration and objects
         Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_1.txt"), false);
-        MathMLConverter mathMLConverter = new MathMLConverter(new MathMLConverterConfig().setLatexml(new LateXMLConfig().setActive(true).setUrl("")));
+        MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(new LateXMLConfig().setActive(true).setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
+        MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
+        // test
         String result = mathMLConverter.transform((Element) formulaNode.getFirstChild());
         assertThat(result, equalToIgnoringWhiteSpace(getResourceContent("mathml_latex_1_expected.txt")));
     }
 
     @Test(expected = MathConverterException.class)
-    @Ignore("need latexml installation")
+//    @Ignore("need latexml service")
     public void transform_latex_2() throws Exception, MathConverterException {
+        // prepare configuration and objects
         Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_2.txt"), false);
-        MathMLConverter mathMLConverter = new MathMLConverter(new MathMLConverterConfig().setLatexml(new LateXMLConfig().setActive(true).setUrl("")));
+        MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(new LateXMLConfig().setActive(true).setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
+        MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
+        // test
         String result = mathMLConverter.transform((Element) formulaNode.getFirstChild());
         assertThat(result, is(getResourceContent("mathml_latex_2_expected.txt")));
     }
@@ -149,22 +161,22 @@ public class MathMLConverterTest {
     public void canonilize() throws Exception, MathConverterException {
         // prepare and execute
         String actualMathML = new MathMLConverter().canonicalize(getResourceContent("mathml_canonilize_1.xml"));
-        String expected = "<math xmlns=\"http://www.w3.org/1998/Math/MathML\" id=\"p1.1.m1.1\">\n" +
-                "    <semantics id=\"p1.1.m1.1a\">\n" +
-                "        <mrow id=\"p1.1.m1.1.3.4.2.1\" xref=\"p1.1.m1.1.3.4.2.1.cmml\">\n" +
-                "            <mo id=\"p1.1.m1.1.3.4.2.1.1\" xref=\"p1.1.m1.1.3.4.2.1.1.cmml\">-</mo>\n" +
-                "            <mi id=\"p1.1.m1.1.3.4.2.1.2\" xref=\"p1.1.m1.1.3.4.2.1.2.cmml\">t</mi>\n" +
-                "        </mrow>\n" +
-                "        <annotation-xml encoding=\"MathML-Content\" id=\"p1.1.m1.1b\">\n" +
-                "            <apply id=\"p1.1.m1.1.3.4.2.1.cmml\" xref=\"p1.1.m1.1.3.4.2.1\">\n" +
-                "                <minus id=\"p1.1.m1.1.3.4.2.1.1.cmml\" xref=\"p1.1.m1.1.3.4.2.1.1\" />\n" +
-                "                <ci id=\"p1.1.m1.1.3.4.2.1.2.cmml\" xref=\"p1.1.m1.1.3.4.2.1.2\">t</ci>\n" +
-                "            </apply>\n" +
-                "        </annotation-xml>\n" +
-                "    </semantics>\n" +
-                "</math>\n";
+        String expected = getResourceContent("mathml_canonilize_expected.xml");
         // they should be equal - if not, the UnaryOperatorRemover is active and this should not be!
         assertThat(actualMathML, is(expected));
+    }
+
+
+    @Test
+    public void verifyMathML() throws Exception, MathConverterException {
+        String shouldbeOkay = new MathMLConverter().verifyMathML(getResourceContent("mathml_canonilize_expected.xml"));
+        assertThat(shouldbeOkay, notNullValue());
+    }
+
+    @Test(expected = MathConverterException.class)
+    public void verifyMathML_exception() throws Exception, MathConverterException {
+        // empty document
+        new MathMLConverter().verifyMathML("<math />");
     }
 
 

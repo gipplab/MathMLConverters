@@ -10,12 +10,15 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
  * @author Vincent Stange
  */
 public class LaTeXMLConverterTest {
+
+    public static final String HTTP_LATEXML_TEST = "http://gw125.iu.xsede.org:8888";
 
     /**
      * This test needs a local LaTeXML installation. If you don't have
@@ -24,26 +27,8 @@ public class LaTeXMLConverterTest {
     @Test
     @Ignore("installation is not always available")
     public void runLatexmlc() throws Exception {
-        // local configuration for the test in json
-        String config = "{\n" +
-                "  \"url\" : \"\",\n" +
-                "  \"params\" : {\n" +
-                "    \"whatsin\" : \"math\",\n" +
-                "    \"whatsout\" : \"math\",\n" +
-                "    \"includestyles\" : \"\",\n" +
-                "    \"format\" : \"xhtml\",\n" +
-                "    \"pmml\" :\"\",\n" +
-                "    \"cmml\" : \"\",\n" +
-                "    \"nodefaultresources\" : \"\",\n" +
-                "    \"linelength\" : \"90\",\n" +
-                "    \"quiet\" : \"\",\n" +
-                "    \"preload\" : \"LaTeX.pool,article.cls,amsmath.sty,amsthm.sty,amstext.sty,amssymb.sty,eucal.sty,DLMFmath.sty,[dvipsnames]xcolor.sty,url.sty,hyperref.sty,[ids]latexml.sty,texvc\",\n" +
-                "   \"stylesheet\":\"DRMF.xsl\"\n" +
-                "  }\n" +
-                "}";
-        LateXMLConfig lateXMLConfig = new ObjectMapper().readValue(config, LateXMLConfig.class);
-        // prepare the converter with a custom configuration
-        LaTeXMLConverter converter = new LaTeXMLConverter(lateXMLConfig);
+        // prepare the converter with a local configuration (no url set)
+        LaTeXMLConverter converter = new LaTeXMLConverter(new LateXMLConfig().setActive(true).setUrl(""));
 
         // test local installation
         String latex = "\\sqrt{3}+\\frac{a+1}{b-2}";
@@ -59,11 +44,11 @@ public class LaTeXMLConverterTest {
      * Test works with http://gw125.iu.xsede.org:8888
      */
     @Test
-    @Ignore("external service needs to be running or be available")
+//    @Ignore("external service needs to be running or be available")
     public void convertLatexmlService() throws Exception {
         // local configuration for the test in json (with DRMF stylesheet)
         String config = "{\n" +
-                "  \"url\" : \"http://gw125.iu.xsede.org:8888\",\n" +
+                "  \"url\" : \"" + HTTP_LATEXML_TEST + "\",\n" +
                 "  \"params\" : {\n" +
                 "    \"whatsin\" : \"math\",\n" +
                 "    \"whatsout\" : \"math\",\n" +
@@ -89,6 +74,15 @@ public class LaTeXMLConverterTest {
         String expected = getResourceContent("latexml_service_expected.txt");
         assertThat(serviceResponse.getStatusCode(), equalTo(0));
         assertThat(serviceResponse.getResult(), equalTo(expected));
+    }
+
+    @Test
+    public void testConfig() {
+        // simple object check
+        LateXMLConfig config = new LateXMLConfig().setActive(false).setUrl(HTTP_LATEXML_TEST);
+        assertThat(config.isActive(), is(false));
+        assertThat(config.getUrl(), is(HTTP_LATEXML_TEST));
+        assertThat(config.getParams(), is(LateXMLConfig.getDefaultConfiguration()));
     }
 
     @Test
