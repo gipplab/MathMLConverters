@@ -1,1 +1,1 @@
-<formula xmlns="http://www.tei-c.org/ns/1.0" rend="display">W(t) = Wmax [1 - exp(b t)]</formula>
+<formula xmlns="http://www.tei-c.org/ns/1.0" rend="display">a+b</formula>
