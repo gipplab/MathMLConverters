@@ -3,6 +3,7 @@
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![MavenCentral](https://maven-badges.herokuapp.com/maven-central/com.formulasearchengine/MathMLConverters/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.formulasearchengine/mathmlconverters/)
 [![Build Status](https://travis-ci.org/ag-gipp/MathMLConverters.svg?branch=master)](https://travis-ci.org/ag-gipp/MathMLConverters)
+[![Coverage Status](https://coveralls.io/repos/github/ag-gipp/MathMLConverters/badge.svg)](https://coveralls.io/github/ag-gipp/MathMLConverters)
 
 This library is a collection of utilities and service calls to convert from various input formats to MathML.
 The desired MathML output is always a well-formed MathML containing the presentation and content semantic. 
