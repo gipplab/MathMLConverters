@@ -49,7 +49,7 @@ public class LaTeXMLConverterTest {
         LaTeXMLConverter converter = new LaTeXMLConverter(lateXMLConfig);
 
         // test online service
-        String latex = "{\\displaystyle\\RiemannZeta@{s}=\\frac{1}{(1-2^{1-s})\\EulerGamma@{s+1}}\\Int{0}{\\infty}@{x}{\\frac{e^{x}x^{s}}{(e^{x}+1)^{2}}}}";
+        String latex = "\\frac{1}{(1-2^{1-s})}";
         LaTeXMLServiceResponse serviceResponse = converter.convertLatexmlService(latex);
 
         // validate

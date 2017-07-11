@@ -1,4 +1,4 @@
-<math xmlns="http://www.w3.org/1998/Math/MathML" id="p1.1.m1.1" alttext="W(t)=Wmax[1-exp(-bt)]">
+<math xmlns="http://www.w3.org/1998/Math/MathML" id="p1.1.m1.1" alttext="W(t)=Wmax[1-exp(bt)]">
   <semantics id="p1.1.m1.1a">
     <mrow id="p1.1.m1.1.22" xref="p1.1.m1.1.22.cmml">
 
@@ -88,6 +88,6 @@
         </apply>
       </apply>
     </annotation-xml>
-    <annotation encoding="application/x-tex" id="p1.1.m1.1c">W(t)=Wmax[1-exp(-bt)]</annotation>
+    <annotation encoding="application/x-tex" id="p1.1.m1.1c">W(t)=Wmax[1-exp(bt)]</annotation>
   </semantics>
 </math>
