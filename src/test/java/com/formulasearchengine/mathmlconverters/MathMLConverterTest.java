@@ -7,7 +7,6 @@ import com.formulasearchengine.mathmlconverters.mathoid.MathoidConverterTest;
 import com.formulasearchengine.mathmlconverters.util.MathConverterException;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
