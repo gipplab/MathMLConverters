@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.mathoid;
+package com.formulasearchengine.mathmlconverters.mathoid;
 
 import com.formulasearchengine.mathmltools.xmlhelper.NonWhitespaceNodeList;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
@@ -7,10 +7,6 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 
 /**
  * Transformer from Enriched Math to a well formed MathML that contains
@@ -26,7 +22,7 @@ public class EnrichedMathMLTransformer {
 
     private static Logger logger = Logger.getLogger(EnrichedMathMLTransformer.class);
 
-    private static final String XSL = "com/formulasearchengine/math/mathoid/EnrichedMathML2Cmml.xsl";
+    private static final String XSL = "com/formulasearchengine/mathmlconverters/mathoid/EnrichedMathML2Cmml.xsl";
 
     private final Document readDocument;
 
@@ -46,16 +42,15 @@ public class EnrichedMathMLTransformer {
      * <p>
      * This method still has a lot of flaws.
      *
-     * @param xpath current used xpath instance
      * @return String of the new formed document or null, if transformation failed.
      * @throws Exception a lot could go wrong here: parser or transformer error
      */
-    public String getFullMathML(XPath xpath) throws Exception {
-        Element semanticRoot = (Element) xpath.compile("*//semantics").evaluate(readDocument, XPathConstants.NODE);
+    public String getFullMathML() throws Exception {
+        Element semanticRoot = (Element) XMLHelper.getElementB(readDocument, "*//semantics");
         boolean hasSemanticEle = semanticRoot != null;
 
         // get the first mrow element
-        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList((NodeList) xpath.compile("*//mrow").evaluate(readDocument, XPathConstants.NODESET));
+        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(readDocument, "*//mrow"));
         Element mrowNode = (Element) mrowNodes.getFirstElement();
 
         // secure the id field

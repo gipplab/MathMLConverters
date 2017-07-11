@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.mathoid;
+package com.formulasearchengine.mathmlconverters.mathoid;
 
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpEntity;

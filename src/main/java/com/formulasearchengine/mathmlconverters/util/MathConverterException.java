@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.util;
+package com.formulasearchengine.mathmlconverters.util;
 
 /**
  * Exception for warnings regarding problems in the math converter process.

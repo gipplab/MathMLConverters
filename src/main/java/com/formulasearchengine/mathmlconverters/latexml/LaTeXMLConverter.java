@@ -1,11 +1,12 @@
-package com.formulasearchengine.math.latexml;
+package com.formulasearchengine.mathmlconverters.latexml;
 
-import com.formulasearchengine.math.util.CommandExecutor;
+import com.formulasearchengine.mathmlconverters.util.CommandExecutor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -108,18 +109,25 @@ public class LaTeXMLConverter {
      * @param values map of properties converted into a URL path.
      * @return String representation of the URL path.
      */
-    String configToUrlString(Map<String, String> values) {
+    String configToUrlString(Map<String, Object> values) {
         StringBuilder sb = new StringBuilder();
         values.forEach((k, v) -> {
-            // value splitting or create a array with a single or null string
-            String[] list = v.contains(",") ? v.split(",") : new String[]{v};
-            for (String value : list) {
-                sb.append("&").append(k);
-                if (!"".equals(value)) {
-                    sb.append("=").append(value);
+            if (v instanceof List) {
+                for (Object ele : (List) v) {
+                    appendParameterToUrlString(sb, k, ele);
                 }
+            } else {
+                appendParameterToUrlString(sb, k, v);
             }
         });
         return sb.toString();
+    }
+
+    private void appendParameterToUrlString(StringBuilder sb, String key, Object rawValue) {
+        String value = String.valueOf(rawValue);
+        sb.append("&").append(key);
+        if (!"".equals(value)) {
+            sb.append("=").append(value);
+        }
     }
 }

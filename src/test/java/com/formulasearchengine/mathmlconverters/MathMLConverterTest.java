@@ -1,10 +1,10 @@
-package com.formulasearchengine.math;
+package com.formulasearchengine.mathmlconverters;
 
-import com.formulasearchengine.math.latexml.LaTeXMLConverterTest;
-import com.formulasearchengine.math.latexml.LateXMLConfig;
-import com.formulasearchengine.math.mathoid.MathoidConfig;
-import com.formulasearchengine.math.mathoid.MathoidConverterTest;
-import com.formulasearchengine.math.util.MathConverterException;
+import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLConverterTest;
+import com.formulasearchengine.mathmlconverters.latexml.LateXMLConfig;
+import com.formulasearchengine.mathmlconverters.mathoid.MathoidConfig;
+import com.formulasearchengine.mathmlconverters.mathoid.MathoidConverterTest;
+import com.formulasearchengine.mathmlconverters.util.MathConverterException;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;

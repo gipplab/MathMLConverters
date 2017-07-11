@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.canonicalize;
+package com.formulasearchengine.mathmlconverters.canonicalize;
 
 import cz.muni.fi.mir.mathmlcanonicalization.ConfigException;
 import cz.muni.fi.mir.mathmlcanonicalization.MathMLCanonicalizer;
@@ -25,7 +25,7 @@ public final class MathMLCanUtil {
     static {
         // load our custom configuration and the CANONICALIZER itself
         try (InputStream configIS = MathMLCanUtil.class.getClassLoader()
-                .getResourceAsStream("com/formulasearchengine/math/canonicalize/canonicalizer-config.xml")) {
+                .getResourceAsStream("com/formulasearchengine/mathmlconverters/canonicalize/canonicalizer-config.xml")) {
             CANONICALIZER = new MathMLCanonicalizer(configIS);
         } catch (final IOException e) {
             throw new RuntimeException("Could not find config for CANONICALIZER, exiting", e);

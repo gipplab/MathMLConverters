@@ -1,7 +1,7 @@
-package com.formulasearchengine.math;
+package com.formulasearchengine.mathmlconverters;
 
-import com.formulasearchengine.math.latexml.LateXMLConfig;
-import com.formulasearchengine.math.mathoid.MathoidConfig;
+import com.formulasearchengine.mathmlconverters.latexml.LateXMLConfig;
+import com.formulasearchengine.mathmlconverters.mathoid.MathoidConfig;
 
 /**
  * General settings for math related transformations.

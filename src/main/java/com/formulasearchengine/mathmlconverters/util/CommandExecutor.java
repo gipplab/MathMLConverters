@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.util;
+package com.formulasearchengine.mathmlconverters.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
