@@ -4,6 +4,7 @@ import cz.muni.fi.mir.mathmlcanonicalization.ConfigException;
 import cz.muni.fi.mir.mathmlcanonicalization.MathMLCanonicalizer;
 import cz.muni.fi.mir.mathmlcanonicalization.modules.ModuleException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jdom2.JDOMException;
 
 import javax.xml.stream.XMLStreamException;
@@ -54,10 +55,11 @@ public final class MathMLCanUtil {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         CANONICALIZER.canonicalize(input, output);
         String result = output.toString(StandardCharsets.UTF_8.toString());
-        // xml header will not be used
-        if (result.contains("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n")) {
-            result = result.substring("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n".length());
-        }
+
+        // since we can't properly configure the canonicalizer we need to adjust the result string
+        // 1. omit xml header since it will not be used
+        result = StringUtils.remove(result, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        // 2. switch to the line separator used by the system
         return result.replaceAll("\\r\\n", System.getProperty("line.separator"));
     }
 }

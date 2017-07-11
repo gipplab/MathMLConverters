@@ -66,6 +66,14 @@ services:
       speech: true #new feature
       texvcinfo: true
       speech_on: true
+      speech_config:
+        semantics: true
+        domain:  'mathspeak'
+        style:  'default'
+        semantic: true
+        minSTree: false
+        speakText: true
+        enrich: true
       no_check: false
       dpi: 180
       svgo: false
