@@ -1,6 +1,5 @@
 package com.formulasearchengine.mathmlconverters.latexml;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -44,7 +43,6 @@ public class LaTeXMLConverterTest {
      * Test works with http://gw125.iu.xsede.org:8888
      */
     @Test
-    @Ignore("external service needs to be running or be available")
     public void convertLatexmlService() throws Exception {
         // default configuration for the test in json (with DRMF stylesheet)
         LateXMLConfig lateXMLConfig = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);

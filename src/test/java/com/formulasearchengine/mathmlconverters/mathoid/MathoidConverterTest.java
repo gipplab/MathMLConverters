@@ -1,7 +1,6 @@
 package com.formulasearchengine.mathmlconverters.mathoid;
 
 import org.apache.commons.io.IOUtils;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,7 +16,6 @@ public class MathoidConverterTest {
     public static final String HTTP_MATHOID_TEXT = "http://localhost:10044/mml";
 
     @Test
-//    @Ignore("external service needs to be running or be available")
     public void convertMathML() throws Exception {
         MathoidConverter converter = new MathoidConverter(createTestConfig());
         String actual = converter.convertMathML(getResourceContent("mathoid_1_test.txt"));
@@ -26,7 +24,6 @@ public class MathoidConverterTest {
     }
 
     @Test
-//    @Ignore("external service needs to be running or be available")
     public void convertLatex() throws Exception {
         MathoidConverter converter = new MathoidConverter(createTestConfig());
         String actual = converter.convertLatex("\\sqrt{3}+\\frac{a+1}{b-2}");

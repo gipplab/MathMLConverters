@@ -25,7 +25,6 @@ import static org.junit.Assert.assertThat;
 public class MathMLConverterTest {
 
     @Test
-    @Ignore("need external services")
     public void convertPmml() throws Exception, MathConverterException {
         // prepare configuration and objects
         Document mathNode = XMLHelper.string2Doc(getResourceContent("mathml_pmml.txt"), false);
@@ -37,11 +36,10 @@ public class MathMLConverterTest {
     }
 
     @Test
-    @Ignore("need latexml service")
     public void transform_latex_1() throws Exception, MathConverterException {
         // prepare configuration and objects
         Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_1.txt"), false);
-        MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(new LateXMLConfig().setActive(true).setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
+        MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(LateXMLConfig.getDefaultConfiguration().setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
         MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
         // test
         String result = mathMLConverter.transform((Element) formulaNode.getFirstChild());
@@ -49,18 +47,17 @@ public class MathMLConverterTest {
     }
 
     @Test(expected = MathConverterException.class)
-//    @Ignore("need latexml service")
     public void transform_latex_2() throws Exception, MathConverterException {
         // prepare configuration and objects
         Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_2.txt"), false);
-        MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(new LateXMLConfig().setActive(true).setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
+        MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(LateXMLConfig.getDefaultConfiguration().setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
         MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
         // test
         String result = mathMLConverter.transform((Element) formulaNode.getFirstChild());
         assertThat(result, is(getResourceContent("mathml_latex_2_expected.txt")));
     }
 
-    @Test()
+    @Test
     public void transform_mathml_1() throws Exception, MathConverterException {
         Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_perfect_1.txt"), false);
         MathMLConverter mathMLConverter = new MathMLConverter();
