@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.canonicalize;
+package com.formulasearchengine.mathmlconverters.canonicalize;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;

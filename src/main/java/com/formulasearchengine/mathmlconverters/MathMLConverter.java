@@ -1,25 +1,25 @@
-package com.formulasearchengine.math;
+package com.formulasearchengine.mathmlconverters;
 
-import com.formulasearchengine.math.canonicalize.MathMLCanUtil;
-import com.formulasearchengine.math.latexml.LaTeXMLConverter;
-import com.formulasearchengine.math.latexml.LaTeXMLServiceResponse;
-import com.formulasearchengine.math.mathoid.EnrichedMathMLTransformer;
-import com.formulasearchengine.math.mathoid.MathoidConverter;
-import com.formulasearchengine.math.util.MathConverterException;
+import com.formulasearchengine.mathmlconverters.canonicalize.MathMLCanUtil;
+import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLConverter;
+import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLServiceResponse;
+import com.formulasearchengine.mathmlconverters.mathoid.EnrichedMathMLTransformer;
+import com.formulasearchengine.mathmlconverters.mathoid.MathoidConverter;
+import com.formulasearchengine.mathmlconverters.util.MathConverterException;
 import com.formulasearchengine.mathmltools.xmlhelper.NonWhitespaceNodeList;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import com.formulasearchengine.mathmltools.xmlhelper.XmlNamespaceTranslator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
-import org.w3c.dom.*;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -41,8 +41,6 @@ public class MathMLConverter {
 
     private MathMLConverterConfig config;
 
-    private XPath xPath = null;
-
     enum Content {
         unknown, // unknown or not recognized
         latex, // latex inline-formula
@@ -60,8 +58,10 @@ public class MathMLConverter {
         this.config = config;
     }
 
+    /**
+     * empty local constructor without a configuration
+     */
     MathMLConverter() {
-        this.xPath = XPathFactory.newInstance().newXPath(); // XMLHelper.namespaceAwareXpath("d", DEFAULT_NAMESPACE);
     }
 
     /**
@@ -131,7 +131,7 @@ public class MathMLConverter {
      * @throws MathConverterException   math element not found
      */
     private Element grabMathElement(Element formulaNode) throws XPathExpressionException, MathConverterException {
-        Element mathEle = Optional.ofNullable((Element) xPath.evaluate("./*[1]", formulaNode, XPathConstants.NODE))
+        Element mathEle = Optional.ofNullable((Element) XMLHelper.getElementB(formulaNode, "./*[1]"))
                 .orElseThrow(() -> new MathConverterException("no math element found"));
         // check for the "math" root element
         if (mathEle.getNodeName().toLowerCase().contains("math")) {
@@ -150,7 +150,7 @@ public class MathMLConverter {
      */
     Element consolidateMathMLNamespace(Element mathNode) throws MathConverterException {
         try {
-            // FIXME ugly node to document transformation
+            // FIXME ugly node to document transformation since a namespace aware document is required
             mathNode.setAttribute("xmlns", "http://www.w3.org/1998/Math/MathML");
             Document tempDoc = XMLHelper.string2Doc(XMLHelper.printDocument(mathNode), true);
 
@@ -191,9 +191,9 @@ public class MathMLConverter {
      */
     Content scanFormulaNode(Element formulaNode) throws Exception {
         // first off, try scanning for mathml nodes directly
-        Element semanticNode = (Element) xPath.evaluate("//semantics", formulaNode, XPathConstants.NODE);
-        NonWhitespaceNodeList applyNodes = new NonWhitespaceNodeList((NodeList) xPath.evaluate("//apply", formulaNode, XPathConstants.NODESET));
-        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList((NodeList) xPath.evaluate("//mrow", formulaNode, XPathConstants.NODESET));
+        Element semanticNode = (Element) XMLHelper.getElementB(formulaNode, "//semantics");
+        NonWhitespaceNodeList applyNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, "//apply"));
+        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, "//mrow"));
         // both variants are present, if the semantics separator is present everything is fine
         if (applyNodes.getLength() > 0 && mrowNodes.getLength() > 0) {
             return semanticNode != null ? Content.mathml : Content.unknown;
@@ -208,7 +208,7 @@ public class MathMLConverter {
         }
 
         // next, try to identify latex
-        Element child = (Element) xPath.evaluate("./*[1]", formulaNode, XPathConstants.NODE);
+        Element child = (Element) XMLHelper.getElementB(formulaNode, "./*[1]");
         // if there is no child node, we currently anticipate some form of latex formula
         if (child == null && StringUtils.isNotEmpty(formulaNode.getTextContent())) {
             return Content.latex;
@@ -230,7 +230,7 @@ public class MathMLConverter {
             case mathml:
                 return XMLHelper.printDocument(mathEle);
             case cmml:
-                // TODO hopefully in the future
+                // TODO transformation from cmml to pmml
                 throw new MathConverterException("cmml transformation not supported");
             case pmml:
                 // we try to convert this via Mathoid and LaTeXML
@@ -285,7 +285,7 @@ public class MathMLConverter {
             // pmml > emml > pmml + cmml
             String eMathML = converter.convertMathML(rawMathML);
             EnrichedMathMLTransformer converter2 = new EnrichedMathMLTransformer(eMathML);
-            return Optional.ofNullable(converter2.getFullMathML(xPath))
+            return Optional.ofNullable(converter2.getFullMathML())
                     .orElseThrow(() -> new MathConverterException("enriched mathml conversion failed"));
         } catch (HttpClientErrorException e) {
             logger.error("mathoid conversion failed", e);

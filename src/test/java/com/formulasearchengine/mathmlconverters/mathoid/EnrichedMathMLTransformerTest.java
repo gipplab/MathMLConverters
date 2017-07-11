@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.mathoid;
+package com.formulasearchengine.mathmlconverters.mathoid;
 
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import org.junit.Test;

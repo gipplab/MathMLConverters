@@ -1,4 +1,4 @@
-package com.formulasearchengine.math.latexml;
+package com.formulasearchengine.mathmlconverters.latexml;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
@@ -6,12 +6,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * @author Vincent Stange
@@ -46,24 +46,8 @@ public class LaTeXMLConverterTest {
     @Test
     @Ignore("external service needs to be running or be available")
     public void convertLatexmlService() throws Exception {
-        // local configuration for the test in json (with DRMF stylesheet)
-        String config = "{\n" +
-                "  \"url\" : \"" + HTTP_LATEXML_TEST + "\",\n" +
-                "  \"params\" : {\n" +
-                "    \"whatsin\" : \"math\",\n" +
-                "    \"whatsout\" : \"math\",\n" +
-                "    \"includestyles\" : \"\",\n" +
-                "    \"format\" : \"xhtml\",\n" +
-                "    \"pmml\" :\"\",\n" +
-                "    \"cmml\" : \"\",\n" +
-                "    \"nodefaultresources\" : \"\",\n" +
-                "    \"linelength\" : \"90\",\n" +
-                "    \"quiet\" : \"\",\n" +
-                "    \"preload\" : \"LaTeX.pool,article.cls,amsmath.sty,amsthm.sty,amstext.sty,amssymb.sty,eucal.sty,DLMFmath.sty,[dvipsnames]xcolor.sty,url.sty,hyperref.sty,[ids]latexml.sty,texvc\",\n" +
-                "   \"stylesheet\":\"DRMF.xsl\"\n" +
-                "  }\n" +
-                "}";
-        LateXMLConfig lateXMLConfig = new ObjectMapper().readValue(config, LateXMLConfig.class);
+        // default configuration for the test in json (with DRMF stylesheet)
+        LateXMLConfig lateXMLConfig = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);
         LaTeXMLConverter converter = new LaTeXMLConverter(lateXMLConfig);
 
         // test online service
@@ -82,16 +66,16 @@ public class LaTeXMLConverterTest {
         LateXMLConfig config = new LateXMLConfig().setActive(false).setUrl(HTTP_LATEXML_TEST);
         assertThat(config.isActive(), is(false));
         assertThat(config.getUrl(), is(HTTP_LATEXML_TEST));
-        assertThat(config.getParams(), is(LateXMLConfig.getDefaultConfiguration()));
+        assertThat(config.getParams(), notNullValue());
     }
 
     @Test
     public void configToUrlString() throws Exception {
         // prepare
-        Map<String, String> map = new LinkedHashMap<>();
+        Map<String, Object> map = new LinkedHashMap<>();
         map.put("A", "1");
         map.put("B", "");
-        map.put("C", "2,3,4,5");
+        map.put("C", Arrays.asList("2", "3", "4", "5"));
 
         // test it
         LaTeXMLConverter laTeXMLConverter = new LaTeXMLConverter(null);

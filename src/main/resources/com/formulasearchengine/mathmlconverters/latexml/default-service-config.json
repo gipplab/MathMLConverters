@@ -1,0 +1,30 @@
+{
+  "url": "http://gw125.iu.xsede.org:8888",
+  "params": {
+    "whatsin": "math",
+    "whatsout": "math",
+    "includestyles": "",
+    "format": "xhtml",
+    "pmml": "",
+    "cmml": "",
+    "nodefaultresources": "",
+    "linelength": "90",
+    "quiet": "",
+    "preload": [
+      "LaTeX.pool",
+      "article.cls",
+      "amsmath.sty",
+      "amsthm.sty",
+      "amstext.sty",
+      "amssymb.sty",
+      "eucal.sty",
+      "DLMFmath.sty",
+      "[dvipsnames]xcolor.sty",
+      "url.sty",
+      "hyperref.sty",
+      "[ids]latexml.sty",
+      "texvc"
+    ],
+    "stylesheet": "DRMF.xsl"
+  }
+}

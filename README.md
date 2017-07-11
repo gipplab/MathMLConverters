@@ -29,7 +29,6 @@ Note-worthy dependencies for this library.
 
 **MathML-Canonicalizer**: Canonicalizer for MathML formulas. (https://github.com/michal-ruzicka/MathMLCan)
 
-    <!--  -->
     <dependency>
         <groupId>cz.muni.fi.mir</groupId>
         <artifactId>mathml-canonicalizer</artifactId>
