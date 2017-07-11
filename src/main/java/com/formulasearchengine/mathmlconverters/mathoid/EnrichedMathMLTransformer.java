@@ -100,7 +100,9 @@ public class EnrichedMathMLTransformer {
             readNode.setAttribute("id", "p" + newId);
         }
         for (Node child : new NonWhitespaceNodeList(readNode.getChildNodes())) {
-            copyIdField((Element) child);
+            if (child instanceof Element) {
+                copyIdField((Element) child);
+            }
         }
     }
 }
