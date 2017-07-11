@@ -163,7 +163,7 @@ public class MathMLConverterTest {
         String actualMathML = new MathMLConverter().canonicalize(getResourceContent("mathml_canonilize_1.xml"));
         String expected = getResourceContent("mathml_canonilize_expected.xml");
         // they should be equal - if not, the UnaryOperatorRemover is active and this should not be!
-        assertThat(actualMathML, is(expected));
+        assertThat(actualMathML, equalToIgnoringWhiteSpace(expected));
     }
 
 
