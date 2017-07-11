@@ -12,8 +12,8 @@ The desired MathML output is always a well-formed MathML containing the presenta
   * Mathoid Service Call: PMML to Enriched PMML
   * EnrichedMathMLTransformer: Enriched PMML to MathML
 
-It also includes a the MathMLCanonicalizer with a custom configuration, which is adapted
-to the required input format. This utility library canonicalize an input MathML string.
+It also includes the MathMLCanonicalizer with a custom configuration, which is adapted
+to the required input format. This utility library canonicalizes an input MathML string.
 
 ### Dependencies ###
 
@@ -21,8 +21,7 @@ Note-worthy dependencies for this library.
 
 **MathML Tools**: Library with various tools for processing MathML using Java. (https://github.com/physikerwelt/MathMLTools)
 
-    <dependency>
-        <groupId>com.formulasearchengine</groupId>
+    <dependency>        <groupId>com.formulasearchengine</groupId>
         <artifactId>mathmltools</artifactId>
         <version>...</version>
     </dependency>
