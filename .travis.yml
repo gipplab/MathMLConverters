@@ -18,6 +18,7 @@ before_script:
   - sudo apt-get install -y nodejs librsvg2-dev
   - npm i mathoid@0.7.0-alpha1
   - cd node_modules/mathoid
-  - sudo ./server.js -c ../../config.dev.yaml &
+  - sudo chmod +x server.js
+  - ./server.js -c ../../config.dev.yaml &
   - cd ../..
   
