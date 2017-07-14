@@ -6,6 +6,7 @@ import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLServiceResponse;
 import com.formulasearchengine.mathmlconverters.mathoid.EnrichedMathMLTransformer;
 import com.formulasearchengine.mathmlconverters.mathoid.MathoidConverter;
 import com.formulasearchengine.mathmlconverters.util.MathConverterException;
+import com.formulasearchengine.mathmltools.mml.CMMLInfo;
 import com.formulasearchengine.mathmltools.xmlhelper.NonWhitespaceNodeList;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import com.formulasearchengine.mathmltools.xmlhelper.XmlNamespaceTranslator;
@@ -19,6 +20,7 @@ import org.w3c.dom.Node;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
 import java.util.Optional;
@@ -38,6 +40,8 @@ public class MathMLConverter {
     private static final String DEFAULT_NAMESPACE = "http://www.w3.org/1998/Math/MathML";
 
     private static Logger logger = Logger.getLogger(MathMLConverter.class);
+
+    private XPath xPath = XMLHelper.namespaceAwareXpath("m", CMMLInfo.NS_MATHML);
 
     private MathMLConverterConfig config;
 
@@ -131,7 +135,7 @@ public class MathMLConverter {
      * @throws MathConverterException   math element not found
      */
     private Element grabMathElement(Element formulaNode) throws XPathExpressionException, MathConverterException {
-        Element mathEle = Optional.ofNullable((Element) XMLHelper.getElementB(formulaNode, "./*[1]"))
+        Element mathEle = Optional.ofNullable((Element) XMLHelper.getElementB(formulaNode, xPath.compile("./*[1]")))
                 .orElseThrow(() -> new MathConverterException("no math element found"));
         // check for the "math" root element
         if (mathEle.getNodeName().toLowerCase().contains("math")) {
@@ -151,7 +155,6 @@ public class MathMLConverter {
     Element consolidateMathMLNamespace(Element mathNode) throws MathConverterException {
         try {
             // FIXME ugly node to document transformation since a namespace aware document is required
-            mathNode.setAttribute("xmlns", "http://www.w3.org/1998/Math/MathML");
             Document tempDoc = XMLHelper.string2Doc(XMLHelper.printDocument(mathNode), true);
 
             // rename namespaces and set a new default namespace
@@ -165,9 +168,9 @@ public class MathMLConverter {
             removeAttribute(root, "xmlns:m");
 
             // form it into a new document, that is not namespace aware
-            Document newDocument = XMLHelper.getNewDocument(false);
+            Document newDocument = XMLHelper.getNewDocument(true);
             newDocument.appendChild(newDocument.adoptNode(root));
-            return (Element) XMLHelper.string2Doc(XMLHelper.printDocument(newDocument), false).getFirstChild();
+            return (Element) XMLHelper.string2Doc(XMLHelper.printDocument(newDocument), true).getFirstChild();
         } catch (Exception e) {
             logger.error("namespace consolidation failed", e);
             throw new MathConverterException("namespace consolidation failed");
@@ -191,9 +194,9 @@ public class MathMLConverter {
      */
     Content scanFormulaNode(Element formulaNode) throws Exception {
         // first off, try scanning for mathml nodes directly
-        Element semanticNode = (Element) XMLHelper.getElementB(formulaNode, "//semantics");
-        NonWhitespaceNodeList applyNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, "//apply"));
-        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, "//mrow"));
+        Element semanticNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:semantics"));
+        NonWhitespaceNodeList applyNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:apply")));
+        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:mrow")));
         // both variants are present, if the semantics separator is present everything is fine
         if (applyNodes.getLength() > 0 && mrowNodes.getLength() > 0) {
             return semanticNode != null ? Content.mathml : Content.unknown;
