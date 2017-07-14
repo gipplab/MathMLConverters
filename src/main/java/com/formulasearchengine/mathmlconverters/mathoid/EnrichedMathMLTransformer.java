@@ -1,5 +1,6 @@
 package com.formulasearchengine.mathmlconverters.mathoid;
 
+import com.formulasearchengine.mathmltools.mml.CMMLInfo;
 import com.formulasearchengine.mathmltools.xmlhelper.NonWhitespaceNodeList;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -7,6 +8,8 @@ import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.xml.xpath.XPath;
 
 /**
  * Transformer from Enriched Math to a well formed MathML that contains
@@ -33,7 +36,7 @@ public class EnrichedMathMLTransformer {
      * @param eMathML The MathML the transformer will use
      */
     public EnrichedMathMLTransformer(String eMathML) {
-        readDocument = XMLHelper.string2Doc(eMathML, false);
+        readDocument = XMLHelper.string2Doc(eMathML, true);
     }
 
     /**
@@ -46,11 +49,12 @@ public class EnrichedMathMLTransformer {
      * @throws Exception a lot could go wrong here: parser or transformer error
      */
     public String getFullMathML() throws Exception {
-        Element semanticRoot = (Element) XMLHelper.getElementB(readDocument, "*//semantics");
+        XPath xPath = XMLHelper.namespaceAwareXpath("m", CMMLInfo.NS_MATHML);
+        Element semanticRoot = (Element) XMLHelper.getElementB(readDocument, xPath.compile("*//m:semantics"));
         boolean hasSemanticEle = semanticRoot != null;
 
         // get the first mrow element
-        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(readDocument, "*//mrow"));
+        NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(readDocument, xPath.compile("*//m:mrow")));
         Element mrowNode = (Element) mrowNodes.getFirstElement();
 
         // secure the id field
@@ -63,7 +67,7 @@ public class EnrichedMathMLTransformer {
             Node applyNode = readDocument.adoptNode(tmpChild.cloneNode(true));
 
             // create a new "annotation-xml" node and append the created cmml structure
-            Element cmmlSemanticNode = readDocument.createElement("annotation-xml");
+            Element cmmlSemanticNode = readDocument.createElementNS(CMMLInfo.NS_MATHML, "annotation-xml");
             cmmlSemanticNode.setAttribute("encoding", "MathML-Content");
             cmmlSemanticNode.appendChild(applyNode);
 
@@ -75,7 +79,7 @@ public class EnrichedMathMLTransformer {
                 Node mathRoot = readDocument.getFirstChild();
                 Node tmpMrowNode = mathRoot.removeChild(mrowNode);
 
-                Element newSemanticRoot = readDocument.createElement("semantics");
+                Element newSemanticRoot = readDocument.createElementNS(CMMLInfo.NS_MATHML, "semantics");
                 newSemanticRoot.appendChild(tmpMrowNode);
                 newSemanticRoot.appendChild(cmmlSemanticNode);
 
