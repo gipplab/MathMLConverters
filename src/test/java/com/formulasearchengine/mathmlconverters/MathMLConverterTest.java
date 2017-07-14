@@ -26,7 +26,7 @@ public class MathMLConverterTest {
     @Test
     public void convertPmml() throws Exception, MathConverterException {
         // prepare configuration and objects
-        Document mathNode = XMLHelper.string2Doc(getResourceContent("mathml_pmml.txt"), false);
+        Document mathNode = XMLHelper.string2Doc(getResourceContent("mathml_pmml.txt"), true);
         MathMLConverterConfig mathConfig = new MathMLConverterConfig().setMathoid(new MathoidConfig().setActive(true).setUrl(MathoidConverterTest.HTTP_MATHOID_TEXT));
         MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
         // test
@@ -37,7 +37,7 @@ public class MathMLConverterTest {
     @Test
     public void transform_latex_1() throws Exception, MathConverterException {
         // prepare configuration and objects
-        Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_1.txt"), false);
+        Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_1.txt"), true);
         MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(LateXMLConfig.getDefaultConfiguration().setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
         MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
         // test
@@ -48,7 +48,7 @@ public class MathMLConverterTest {
     @Test(expected = MathConverterException.class)
     public void transform_latex_2() throws Exception, MathConverterException {
         // prepare configuration and objects
-        Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_2.txt"), false);
+        Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_latex_2.txt"), true);
         MathMLConverterConfig mathConfig = new MathMLConverterConfig().setLatexml(LateXMLConfig.getDefaultConfiguration().setUrl(LaTeXMLConverterTest.HTTP_LATEXML_TEST));
         MathMLConverter mathMLConverter = new MathMLConverter(mathConfig);
         // test
@@ -58,7 +58,7 @@ public class MathMLConverterTest {
 
     @Test
     public void transform_mathml_1() throws Exception, MathConverterException {
-        Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_perfect_1.txt"), false);
+        Document formulaNode = XMLHelper.string2Doc(getResourceContent("mathml_perfect_1.txt"), true);
         MathMLConverter mathMLConverter = new MathMLConverter();
         String result = mathMLConverter.transform((Element) formulaNode.getFirstChild());
         assertThat(result, equalToIgnoringWhiteSpace(getResourceContent("mathml_perfect_1_expected.txt")));
@@ -72,7 +72,7 @@ public class MathMLConverterTest {
                 "</m:math>", false);
         Element result = new MathMLConverter().consolidateMathMLNamespace((Element) mathNode.getFirstChild());
         String actual = XMLHelper.printDocument(result);
-        assertThat(actual, is("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n   <mrow>Test</mrow>\n</math>"));
+        assertThat(actual, equalToIgnoringWhiteSpace("<math xmlns=\"http://www.w3.org/1998/Math/MathML\">\n<mrow>Test</mrow>\n</math>"));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class MathMLConverterTest {
 
     @Test
     public void scanFormulaNode_mathml() throws Exception, MathConverterException {
-        Document mathNode = XMLHelper.string2Doc(getResourceContent("mathml_perfect_1.txt"), false);
+        Document mathNode = XMLHelper.string2Doc(getResourceContent("mathml_perfect_1.txt"), true);
         MathMLConverter.Content result = new MathMLConverter().scanFormulaNode((Element) mathNode.getFirstChild());
         assertThat(result, is(MathMLConverter.Content.mathml));
     }
