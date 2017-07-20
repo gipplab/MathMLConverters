@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -65,6 +66,7 @@ public class LaTeXMLConverterTest {
         assertThat(config.isActive(), is(false));
         assertThat(config.getUrl(), is(HTTP_LATEXML_TEST));
         assertThat(config.getParams(), notNullValue());
+        assertEquals(config.getParams().size(), 0);
     }
 
     @Test
@@ -81,6 +83,18 @@ public class LaTeXMLConverterTest {
 
         // verify
         assertThat(result, equalTo("&A=1&B&C=2&C=3&C=4&C=5"));
+    }
+
+    @Test
+    public void configToUrlStringWithCnfg() throws Exception {
+        LateXMLConfig config = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);
+        assertThat(config.getUrl(), is(HTTP_LATEXML_TEST));
+        assertEquals(config.getParams().size(), 11);
+        LaTeXMLConverter laTeXMLConverter = new LaTeXMLConverter(config);
+        String result = laTeXMLConverter.configToUrlString(config.getParams());
+
+        // verify
+        assertThat(result, equalTo("&whatsin=math&whatsout=math&includestyles&format=xhtml&pmml&cmml&nodefaultresources&linelength=90&quiet&preload=LaTeX.pool&preload=article.cls&preload=amsmath.sty&preload=amsthm.sty&preload=amstext.sty&preload=amssymb.sty&preload=eucal.sty&preload=DLMFmath.sty&preload=[dvipsnames]xcolor.sty&preload=url.sty&preload=hyperref.sty&preload=[ids]latexml.sty&preload=texvc&stylesheet=DRMF.xsl"));
     }
 
     private String getResourceContent(String resourceFilename) throws IOException {
