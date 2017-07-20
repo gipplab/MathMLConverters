@@ -85,6 +85,32 @@ public class LaTeXMLConverterTest {
         assertThat(result, equalTo("&A=1&B&C=2&C=3&C=4&C=5"));
     }
 
+    /**
+     * The VMEXT demo converts arrays to k-v-pairs in with integer numbers as keys.
+     * For example a,b would become 0=a, 1=b
+     * @throws Exception
+     */
+    @Test
+    public void configToUrlStringKeys() throws Exception {
+        // prepare
+        Map<String, Object> map = new LinkedHashMap<>();
+        Map<String, Object> innerMap = new LinkedHashMap<>();
+        innerMap.put("0","2");
+        innerMap.put("1","3");
+        innerMap.put("2","4");
+        innerMap.put("3","5");
+        map.put("A", "1");
+        map.put("B", "");
+        map.put("C", innerMap);
+
+        // test it
+        LaTeXMLConverter laTeXMLConverter = new LaTeXMLConverter(null);
+        String result = laTeXMLConverter.configToUrlString(map);
+
+        // verify
+        assertThat(result, equalTo("&A=1&B&C=2&C=3&C=4&C=5"));
+    }
+
     @Test
     public void configToUrlStringWithCnfg() throws Exception {
         LateXMLConfig config = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);

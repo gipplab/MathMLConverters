@@ -116,6 +116,9 @@ public class LaTeXMLConverter {
                 for (Object ele : (List) v) {
                     appendParameterToUrlString(sb, k, ele);
                 }
+            } else if (v instanceof Map) {
+                final Map map = (Map) v;
+                map.forEach((o, o2) -> appendParameterToUrlString(sb,k,o2));
             } else {
                 appendParameterToUrlString(sb, k, v);
             }
