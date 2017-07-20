@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
@@ -57,6 +58,25 @@ public class LaTeXMLConverterTest {
         String expected = getResourceContent("latexml_service_expected.txt");
         assertThat(serviceResponse.getStatusCode(), equalTo(0));
         assertThat(serviceResponse.getResult(), equalTo(expected));
+    }
+
+    /**
+     * Test works with http://gw125.iu.xsede.org:8888
+     */
+    @Test
+    public void convertLatexmlService2() throws Exception {
+        // default configuration for the test in json (with DRMF stylesheet)
+        LateXMLConfig lateXMLConfig = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);
+        LaTeXMLConverter converter = new LaTeXMLConverter(lateXMLConfig);
+
+        // test online service
+        String latex = getResourceContent("latexml_service_2_test.txt");
+        LaTeXMLServiceResponse serviceResponse = converter.convertLatexmlService(latex);
+
+        // validate
+        String expected = getResourceContent("latexml_service_2_expected.txt");
+        assertThat(serviceResponse.getStatusCode(), equalTo(0));
+        assertThat(serviceResponse.getResult(), equalToIgnoringWhiteSpace(expected));
     }
 
     @Test
