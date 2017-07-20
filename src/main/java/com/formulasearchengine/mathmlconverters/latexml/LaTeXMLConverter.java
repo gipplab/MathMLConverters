@@ -6,6 +6,9 @@ import org.apache.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -88,8 +91,13 @@ public class LaTeXMLConverter {
      * @return MathML String
      */
     public LaTeXMLServiceResponse convertLatexmlService(String latex) {
-        String payload = "format=xhtml" + configToUrlString(lateXMLConfig.getParams()) + "&tex=literal:" + latex;
+        try {
+            latex = URLEncoder.encode(latex, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ignore) {
+            logger.warn("encoding not supported", ignore);
+        }
 
+        String payload = "format=xhtml" + configToUrlString(lateXMLConfig.getParams()) + "&tex=" + latex;
         RestTemplate restTemplate = new RestTemplate();
         try {
             LaTeXMLServiceResponse rep = restTemplate.postForObject(lateXMLConfig.getUrl(), payload, LaTeXMLServiceResponse.class);
