@@ -110,7 +110,6 @@ public class LaTeXMLConverterTest {
         // verify
         assertThat(result, equalTo("&A=1&B&C=2&C=3&C=4&C=5"));
     }
-
     @Test
     public void configToUrlStringWithCnfg() throws Exception {
         LateXMLConfig config = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);
