@@ -112,7 +112,7 @@ public class MathMLConverter {
      */
     String verifyMathML(String canMathML) throws MathConverterException {
         try {
-            Document tempDoc = XMLHelper.string2Doc(canMathML, false);
+            Document tempDoc = XMLHelper.string2Doc(canMathML, true);
             Content content = scanFormulaNode((Element) tempDoc.getFirstChild());
             if (content == Content.mathml) {
                 return canMathML;
