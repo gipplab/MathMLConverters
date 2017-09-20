@@ -10,13 +10,12 @@ import com.formulasearchengine.mathmltools.mml.CMMLInfo;
 import com.formulasearchengine.mathmltools.xmlhelper.NonWhitespaceNodeList;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import com.formulasearchengine.mathmltools.xmlhelper.XmlNamespaceTranslator;
+import com.google.common.collect.Multiset;
+import com.google.common.collect.TreeMultiset;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -51,6 +50,12 @@ public class MathMLConverter {
         pmml, // only presentation MathML
         cmml, // only content MathML
         mathml // well formed MathML (pmml and cmml)
+    }
+
+    private Multiset<String> histogram = TreeMultiset.create();
+
+    public Multiset<String> getHistogram() {
+        return histogram;
     }
 
     private String formulaId;
@@ -103,6 +108,7 @@ public class MathMLConverter {
         return verifyMathML(canonicalize(rawMathML));
     }
 
+
     /**
      * Just a quick scan over.
      *
@@ -114,6 +120,11 @@ public class MathMLConverter {
         try {
             Document tempDoc = XMLHelper.string2Doc(canMathML, true);
             Content content = scanFormulaNode((Element) tempDoc.getFirstChild());
+            NodeList tmplist = tempDoc.getElementsByTagName("ci");
+            for (int i = 0; i < tmplist.getLength(); i++) {
+                Node tmpNode = tmplist.item(i);
+                histogram.add(tmpNode.getTextContent());
+            }
             if (content == Content.mathml) {
                 return canMathML;
             } else {
@@ -194,11 +205,18 @@ public class MathMLConverter {
      */
     Content scanFormulaNode(Element formulaNode) throws Exception {
         // first off, try scanning for mathml nodes directly
+        Element annotationNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:annotation-xml"));
+        Boolean encodingMathML;
+        if (annotationNode != null) {
+            encodingMathML = annotationNode.getAttribute("encoding").equals("MathML-Content");
+        } else {
+            encodingMathML = false;
+        }
         Element semanticNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:semantics"));
         NonWhitespaceNodeList applyNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:apply")));
         NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:mrow")));
         // both variants are present, if the semantics separator is present everything is fine
-        if (applyNodes.getLength() > 0 && mrowNodes.getLength() > 0) {
+        if (applyNodes.getLength() > 0 && mrowNodes.getLength() > 0 || encodingMathML) {
             return semanticNode != null ? Content.mathml : Content.unknown;
         }
         // only apply nodes (cmml root element) present?
