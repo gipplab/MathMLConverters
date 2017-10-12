@@ -64,6 +64,25 @@ public class LaTeXMLConverterTest {
      * Test works with http://gw125.iu.xsede.org:8888
      */
     @Test
+    public void convertURIEncoding() throws Exception {
+        // default configuration for the test in json (with DRMF stylesheet)
+        LateXMLConfig lateXMLConfig = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);
+        LaTeXMLConverter converter = new LaTeXMLConverter(lateXMLConfig);
+
+        // test online service
+        String latex = "a+2 b";
+        LaTeXMLServiceResponse serviceResponse = converter.convertLatexmlService(latex);
+
+        // validate
+        String expected = getResourceContent("latexml_service_3_expected.txt");
+        assertThat(serviceResponse.getStatusCode(), equalTo(0));
+        assertThat(serviceResponse.getResult(), equalTo(expected));
+    }
+
+    /**
+     * Test works with http://gw125.iu.xsede.org:8888
+     */
+    @Test
     public void convertLatexmlService2() throws Exception {
         // default configuration for the test in json (with DRMF stylesheet)
         LateXMLConfig lateXMLConfig = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);
