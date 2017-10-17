@@ -1,6 +1,6 @@
 {
   "active": "true",
-  "url": "http://gw125.iu.xsede.org:8888",
+  "url": "https://drmf-latexml.wmflabs.org",
   "params": {
     "whatsin": "math",
     "whatsout": "math",

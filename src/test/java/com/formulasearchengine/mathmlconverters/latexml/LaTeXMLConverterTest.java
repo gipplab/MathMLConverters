@@ -19,7 +19,7 @@ import static org.junit.Assert.assertThat;
  */
 public class LaTeXMLConverterTest {
 
-    public static final String HTTP_LATEXML_TEST = "http://gw125.iu.xsede.org:8888";
+    public static final String HTTP_LATEXML_TEST = "https://drmf-latexml.wmflabs.org";
 
     /**
      * This test needs a local LaTeXML installation. If you don't have
