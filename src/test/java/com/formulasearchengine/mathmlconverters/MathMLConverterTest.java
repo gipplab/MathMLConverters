@@ -144,6 +144,20 @@ public class MathMLConverterTest {
     }
 
     @Test
+    public void scanFormulaNode_mathml_example() throws Exception, MathConverterException {
+        Document mathNode = XMLHelper.string2Doc("<m:math xmlns:m=\"http://www.w3.org/1998/Math/MathML\" alttext=\"N_{n}^{+}\" display=\"inline\"><m:semantics><m:msubsup id=\"m1.4\" xref=\"m1.4.cmml\"><m:mi id=\"m1.1\" xref=\"m1.1.cmml\">N</m:mi><m:mi id=\"m1.2\" xref=\"m1.2.cmml\">n</m:mi><m:mo id=\"m1.3\" xref=\"m1.3.cmml\">+</m:mo></m:msubsup><m:annotation-xml encoding=\"MathML-Content\"><m:apply id=\"m1.4.cmml\" xref=\"m1.4\"><m:csymbol cd=\"ambiguous\" id=\"m1.4.1.cmml\" xref=\"m1.4\">superscript</m:csymbol><m:apply id=\"m1.4.3.cmml\" xref=\"m1.4\"><m:csymbol cd=\"ambiguous\" id=\"m1.4.2.cmml\" xref=\"m1.4\">subscript</m:csymbol><m:ci id=\"m1.1.cmml\" xref=\"m1.1\">\uD835\uDC41</m:ci><m:ci id=\"m1.2.cmml\" xref=\"m1.2\">\uD835\uDC5B</m:ci></m:apply><m:plus id=\"m1.3.cmml\" xref=\"m1.3\"/></m:apply></m:annotation-xml></m:semantics></m:math>", true);
+        MathMLConverter.Content result = new MathMLConverter().scanFormulaNode((Element) mathNode.getFirstChild());
+        assertThat(result, is(MathMLConverter.Content.mathml));
+    }
+
+    @Test
+    public void scanFormulaNode_LaTeXML_example() throws Exception, MathConverterException {
+        Document mathNode = XMLHelper.string2Doc("<m:math xmlns:m=\"http://www.w3.org/1998/Math/MathML\" alttext=\"N_{n}^{+}\" display=\"inline\"><m:semantics><m:msubsup id=\"m1.4\" xref=\"m1.4.cmml\"><m:mi id=\"m1.1\" xref=\"m1.1.cmml\">N</m:mi><m:mi id=\"m1.2\" xref=\"m1.2.cmml\">n</m:mi><m:mo id=\"m1.3\" xref=\"m1.3.cmml\">+</m:mo></m:msubsup><m:annotation-xml encoding=\"MathML-Content\"><m:apply id=\"m1.4.cmml\" xref=\"m1.4\"><m:csymbol cd=\"ambiguous\" id=\"m1.4.1.cmml\" xref=\"m1.4\">superscript</m:csymbol><m:apply id=\"m1.4.3.cmml\" xref=\"m1.4\"><m:csymbol cd=\"ambiguous\" id=\"m1.4.2.cmml\" xref=\"m1.4\">subscript</m:csymbol><m:ci id=\"m1.1.cmml\" xref=\"m1.1\">\uD835\uDC41</m:ci><m:ci id=\"m1.2.cmml\" xref=\"m1.2\">\uD835\uDC5B</m:ci></m:apply><m:plus id=\"m1.3.cmml\" xref=\"m1.3\"/></m:apply></m:annotation-xml></m:semantics></m:math>", true);
+        MathMLConverter.Content result = new MathMLConverter().scanFormulaNode((Element) mathNode.getFirstChild());
+        assertThat(result, is(MathMLConverter.Content.mathml));
+    }
+
+    @Test
     public void scanFormulaNode_latex() throws Exception, MathConverterException {
         Document mathNode = XMLHelper.string2Doc("<mml:math xmlns:mml=\"http://www.w3.org/1998/Math/MathML\">\n" +
                 "a+b\n" +
@@ -165,7 +179,7 @@ public class MathMLConverterTest {
 
     @Test
     public void verifyMathML() throws Exception, MathConverterException {
-        String shouldbeOkay = new MathMLConverter().verifyMathML(getResourceContent("mathml_canonilize_expected.xml"));
+        String shouldbeOkay = new MathMLConverter().verifyMathML(getResourceContent("canonicalize/mathml_real_1_test.xml"));
         assertThat(shouldbeOkay, notNullValue());
     }
 
