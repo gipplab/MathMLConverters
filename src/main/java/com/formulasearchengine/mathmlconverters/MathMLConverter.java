@@ -94,6 +94,12 @@ public class MathMLConverter {
             // 2a. grab the "math" root element
             Element mathEle = grabMathElement(formulaNode);
             formulaId = mathEle.getAttribute("id");
+            if (formulaId.equals("")) {
+                try {
+                    Element applyNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:apply"));
+                    formulaId = applyNode.getAttribute("id");
+                } catch (Exception e) { }
+            }
             formulaName = mathEle.getAttribute("name");
             // 2b. try to bring the content into our desired well formatted mathml
             rawMathML = transformMML(mathEle, content);
@@ -206,17 +212,13 @@ public class MathMLConverter {
     Content scanFormulaNode(Element formulaNode) throws Exception {
         // first off, try scanning for mathml nodes directly
         Element annotationNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:annotation-xml"));
-        Boolean encodingMathML;
-        if (annotationNode != null) {
-            encodingMathML = annotationNode.getAttribute("encoding").equals("MathML-Content");
-        } else {
-            encodingMathML = false;
-        }
+        //Check if there is an annotationNode and if so check if it's in MathML-Content encoding, which currently indicates LaTeXML Content
+        Boolean isLaTeXML = annotationNode != null ? annotationNode.getAttribute("encoding").equals("MathML-Content") : false;
         Element semanticNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:semantics"));
         NonWhitespaceNodeList applyNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:apply")));
         NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:mrow")));
         // both variants are present, if the semantics separator is present everything is fine
-        if (applyNodes.getLength() > 0 && mrowNodes.getLength() > 0 || encodingMathML) {
+        if ((applyNodes.getLength() > 0 && mrowNodes.getLength() > 0) || isLaTeXML) {
             return semanticNode != null ? Content.mathml : Content.unknown;
         }
         // only apply nodes (cmml root element) present?
