@@ -129,7 +129,12 @@ public class MathMLConverter {
             NodeList tmplist = tempDoc.getElementsByTagName("ci");
             for (int i = 0; i < tmplist.getLength(); i++) {
                 Node tmpNode = tmplist.item(i);
-                histogram.add(tmpNode.getTextContent());
+                String tmpString = tmpNode.getTextContent();
+                tmpString.trim();
+                tmpString.replaceAll("\\s+", "");
+                if (!(tmpString.equals("") || tmpString.equals(" "))) {
+                    histogram.add(tmpString);
+                }
             }
             if (content == Content.mathml) {
                 return canMathML;
