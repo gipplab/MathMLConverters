@@ -6,7 +6,7 @@ jdk:
 
 before_script:
   - curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-  - sudo apt-get install -y nodejs librsvg2-dev
+  - sudo apt-get install -y latexml nodejs librsvg2-dev
   - npm i mathoid
   - cd node_modules/mathoid
   - sudo chmod +x server.js
