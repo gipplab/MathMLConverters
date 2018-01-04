@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.text.IsEqualIgnoringWhiteSpace.equalToIgnoringWhiteSpace;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author Vincent Stange
@@ -26,8 +27,8 @@ public class LaTeXMLConverterTest {
      * one, just @Ignore this test.
      */
     @Test
-    @Ignore("installation is not always available")
     public void runLatexmlc() throws Exception {
+        assumeTrue("latexmlc not present. skipping", LaTeXMLConverter.latexmlcPresent());
         // prepare the converter with a local configuration (no url set)
         LaTeXMLConverter converter = new LaTeXMLConverter(new LateXMLConfig().setActive(true).setUrl(""));
 

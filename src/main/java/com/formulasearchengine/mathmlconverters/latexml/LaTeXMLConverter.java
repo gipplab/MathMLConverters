@@ -141,4 +141,14 @@ public class LaTeXMLConverter {
             sb.append("=").append(value);
         }
     }
+
+    public static boolean latexmlcPresent()  {
+        CommandExecutor executor = new CommandExecutor( "which", "latexmlc");
+        try {
+            executor.exec( 100 );
+        } catch (Exception e) {
+            return false;
+        }
+        return executor.getProcess().exitValue() == 0;
+    }
 }
