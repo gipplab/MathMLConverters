@@ -4,15 +4,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.web.client.HttpClientErrorException;
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.formulasearchengine.mathmlconverters.canonicalize.MathMLCanUtil;
 import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLConverter;
 import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLServiceResponse;
@@ -29,6 +20,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.web.client.HttpClientErrorException;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This Converter is responsible to scan a formula node (TEI format),
@@ -217,7 +216,6 @@ public class MathMLConverter {
             field = document.getClass().getDeclaredField("fNamespacesEnabled");
             field.setAccessible(true);
             return (boolean) field.get(document);
-
         } catch (NoSuchFieldException | IllegalAccessException e) {
             logger.debug("Possible performance issue: Can not determine if node document is namespace aware.", e);
             return false;
