@@ -104,6 +104,7 @@ public class MathMLConverter {
                     Element applyNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:apply"));
                     formulaId = applyNode.getAttribute("id");
                 } catch (Exception e) {
+                    logger.trace("can not find apply node ", e);
                 }
             }
             formulaName = mathEle.getAttribute("name");
