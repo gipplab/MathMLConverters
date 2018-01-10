@@ -22,6 +22,12 @@ public class CommandExecutor {
      */
     private ProcessBuilder pb;
 
+    public Process getProcess() {
+        return process;
+    }
+
+    private Process process;
+
     /**
      * Instantiates a new command executor.
      *
@@ -41,18 +47,17 @@ public class CommandExecutor {
     public String exec(long timeoutMs) throws Exception {
         StringBuilder output = new StringBuilder();
 
-        Process p;
         try {
-            p = pb.start();
+            process = pb.start();
         } catch (IOException e) {
             e.printStackTrace();
             throw e;
         }
 
         long startTime = System.currentTimeMillis();
-        InputStream stdout = p.getInputStream();
-        OutputStream stdin = p.getOutputStream();
-        InputStream stderr = p.getErrorStream();
+        InputStream stdout = process.getInputStream();
+        OutputStream stdin = process.getOutputStream();
+        InputStream stderr = process.getErrorStream();
         try (BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(stdout, "UTF-8"));
              BufferedReader stderrReader = new BufferedReader(new InputStreamReader(stderr, "UTF-8"))) {
 
@@ -69,7 +74,7 @@ public class CommandExecutor {
                 }
                 try {
                     // iterate until process is finished or timeout reached
-                    p.exitValue();
+                    process.exitValue();
                     break;
                 } catch (IllegalThreadStateException e) {
                     try {
@@ -90,13 +95,13 @@ public class CommandExecutor {
             }
 
             try {
-                if (p.exitValue() != 0) {
+                if (process.exitValue() != 0) {
                     long processTime = System.currentTimeMillis() - startTime;
                     String error = IOUtils.toString(stderrReader);
                     logger.error("CommandExecuter " + pb.command()
                             + " (Timeout: (Attempts: " + timeout + ") " + processTime + " ms) "
                             + "Output: " + output + ", Error: " + error);
-                    throw new Exception("Process exited with status " + p.exitValue() + ".");
+                    throw new Exception("Process exited with status " + process.exitValue() + ".");
                 }
             } catch (IOException e) {
                 logger.error("Command Executor Error Stream", e);
@@ -114,7 +119,7 @@ public class CommandExecutor {
             stdin.close();
             stderr.close();
             // process will never be null at this point
-            p.destroy();
+            process.destroy();
         }
     }
 }

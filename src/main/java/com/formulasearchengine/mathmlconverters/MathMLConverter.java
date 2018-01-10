@@ -1,5 +1,9 @@
 package com.formulasearchengine.mathmlconverters;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Optional;
+
 import com.formulasearchengine.mathmlconverters.canonicalize.MathMLCanUtil;
 import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLConverter;
 import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLServiceResponse;
@@ -12,17 +16,18 @@ import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import com.formulasearchengine.mathmltools.xmlhelper.XmlNamespaceTranslator;
 import com.google.common.collect.Multiset;
 import com.google.common.collect.TreeMultiset;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.springframework.web.client.HttpClientErrorException;
-import org.w3c.dom.*;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.IOException;
-import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.springframework.web.client.HttpClientErrorException;
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This Converter is responsible to scan a formula node (TEI format),
@@ -98,7 +103,9 @@ public class MathMLConverter {
                 try {
                     Element applyNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:apply"));
                     formulaId = applyNode.getAttribute("id");
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                    logger.trace("can not find apply node ", e);
+                }
             }
             formulaName = mathEle.getAttribute("name");
             // 2b. try to bring the content into our desired well formatted mathml
@@ -176,9 +183,12 @@ public class MathMLConverter {
      */
     Element consolidateMathMLNamespace(Element mathNode) throws MathConverterException {
         try {
-            // FIXME ugly node to document transformation since a namespace aware document is required
-            Document tempDoc = XMLHelper.string2Doc(XMLHelper.printDocument(mathNode), true);
-
+            Document tempDoc;
+            if (isNsAware(mathNode)) {
+                tempDoc = mathNode.getOwnerDocument();
+            } else {
+                tempDoc = XMLHelper.string2Doc(XMLHelper.printDocument(mathNode), true);
+            }
             // rename namespaces and set a new default namespace
             new XmlNamespaceTranslator()
                     .setDefaultNamespace(DEFAULT_NAMESPACE)
@@ -189,13 +199,32 @@ public class MathMLConverter {
             removeAttribute(root, "xmlns:mml");
             removeAttribute(root, "xmlns:m");
 
-            // form it into a new document, that is not namespace aware
-            Document newDocument = XMLHelper.getNewDocument(true);
-            newDocument.appendChild(newDocument.adoptNode(root));
-            return (Element) XMLHelper.string2Doc(XMLHelper.printDocument(newDocument), true).getFirstChild();
+            return root;
         } catch (Exception e) {
             logger.error("namespace consolidation failed", e);
             throw new MathConverterException("namespace consolidation failed");
+        }
+    }
+
+    /**
+     * Guesses if the Node is in a namespace aware document.
+     * <p>
+     * Implementation Note: Unfortunately this information (about the parser) is lost after parsing.
+     * However, the  DeferredDocumentImpl fortunately caches parser.getNamespaces().
+     *
+     * @param mathNode
+     * @return
+     */
+    private boolean isNsAware(Element mathNode) {
+        Field field;
+        Document document = mathNode.getOwnerDocument();
+        try {
+            field = document.getClass().getDeclaredField("fNamespacesEnabled");
+            field.setAccessible(true);
+            return (boolean) field.get(document);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            logger.debug("Possible performance issue: Can not determine if node document is namespace aware.", e);
+            return false;
         }
     }
 
