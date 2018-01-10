@@ -10,8 +10,6 @@ import com.formulasearchengine.mathmltools.mml.CMMLInfo;
 import com.formulasearchengine.mathmltools.xmlhelper.NonWhitespaceNodeList;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import com.formulasearchengine.mathmltools.xmlhelper.XmlNamespaceTranslator;
-import com.google.common.collect.Multiset;
-import com.google.common.collect.TreeMultiset;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
@@ -22,6 +20,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
+
 import java.util.Optional;
 
 /**
@@ -50,12 +49,6 @@ public class MathMLConverter {
         pmml, // only presentation MathML
         cmml, // only content MathML
         mathml // well formed MathML (pmml and cmml)
-    }
-
-    private Multiset<String> histogram = TreeMultiset.create();
-
-    public Multiset<String> getHistogram() {
-        return histogram;
     }
 
     private String formulaId;
@@ -126,16 +119,7 @@ public class MathMLConverter {
         try {
             Document tempDoc = XMLHelper.string2Doc(canMathML, true);
             Content content = scanFormulaNode((Element) tempDoc.getFirstChild());
-            NodeList tmplist = tempDoc.getElementsByTagName("ci");
-            for (int i = 0; i < tmplist.getLength(); i++) {
-                Node tmpNode = tmplist.item(i);
-                String tmpString = tmpNode.getTextContent();
-                tmpString.trim();
-                tmpString.replaceAll("\\s+", "");
-                if (!(tmpString.equals("") || tmpString.equals(" "))) {
-                    histogram.add(tmpString);
-                }
-            }
+            //verify the formula
             if (content == Content.mathml) {
                 return canMathML;
             } else {
