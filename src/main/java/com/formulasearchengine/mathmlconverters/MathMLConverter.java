@@ -1,9 +1,5 @@
 package com.formulasearchengine.mathmlconverters;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Optional;
-
 import com.formulasearchengine.mathmlconverters.canonicalize.MathMLCanUtil;
 import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLConverter;
 import com.formulasearchengine.mathmlconverters.latexml.LaTeXMLServiceResponse;
@@ -14,10 +10,6 @@ import com.formulasearchengine.mathmltools.mml.CMMLInfo;
 import com.formulasearchengine.mathmltools.xmlhelper.NonWhitespaceNodeList;
 import com.formulasearchengine.mathmltools.xmlhelper.XMLHelper;
 import com.formulasearchengine.mathmltools.xmlhelper.XmlNamespaceTranslator;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.web.client.HttpClientErrorException;
@@ -25,6 +17,14 @@ import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Optional;
 
 
 /**
@@ -227,24 +227,35 @@ public class MathMLConverter {
      * @throws Exception parsing error
      */
     Content scanFormulaNode(Element formulaNode) throws Exception {
-        // first off, try scanning for mathml nodes directly
+        // first off, try scanning for a semantic split, this indicates multiple semantics
+        Boolean containsSemantic = XMLHelper.getElementB(formulaNode, xPath.compile("//m:semantics")) != null;
+
+        // check if there is an annotationNode and if so check which semantics are present
         Element annotationNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:annotation-xml"));
-        //Check if there is an annotationNode and if so check if it's in MathML-Content encoding, which currently indicates LaTeXML Content
-        Boolean isLaTeXML = annotationNode != null ? annotationNode.getAttribute("encoding").equals("MathML-Content") : false;
-        Element semanticNode = (Element) XMLHelper.getElementB(formulaNode, xPath.compile("//m:semantics"));
+        Boolean containsCMML = annotationNode != null && annotationNode.getAttribute("encoding").equals("MathML-Content");
+        Boolean containsPMML = annotationNode != null && annotationNode.getAttribute("encoding").equals("MathML-Presentation");
+
+        // if apply are present, the content semantics is used somewhere
         NonWhitespaceNodeList applyNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:apply")));
+        containsCMML |= applyNodes.getLength() > 0;
+
+        // if mrow nodes are present, the presentation semantic is used somewhere
         NonWhitespaceNodeList mrowNodes = new NonWhitespaceNodeList(XMLHelper.getElementsB(formulaNode, xPath.compile("//m:mrow")));
-        // both variants are present, if the semantics separator is present everything is fine
-        if ((applyNodes.getLength() > 0 && mrowNodes.getLength() > 0) || isLaTeXML) {
-            return semanticNode != null ? Content.mathml : Content.unknown;
-        }
-        // only apply nodes (cmml root element) present?
-        if (applyNodes.getLength() > 0) {
-            return Content.cmml;
-        }
-        // or maybe only mrow nodes (pmml root element) present?
-        if (mrowNodes.getLength() > 0) {
-            return Content.pmml;
+        containsPMML |= mrowNodes.getLength() > 0;
+
+        // TODO the containCMML and -PMML can be more specific, e.g. check if identifiers of each semantics is present
+        if (containsSemantic) {
+            // if semantic separator is present plus one opposite semantic, we assume a LaTeXML produced content
+            return containsCMML || containsPMML ? Content.mathml : Content.unknown;
+        } else {
+            if (containsCMML && containsPMML) {
+                // both semantics without semantic separator suggests broken syntax
+                return Content.unknown;
+            } else if (containsCMML) {
+                return Content.cmml;
+            } else if (containsPMML) {
+                return Content.pmml;
+            }
         }
 
         // next, try to identify latex
