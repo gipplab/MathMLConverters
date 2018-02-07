@@ -6,6 +6,7 @@
             data-semantic-content="1"
             data-semantic-id="3"
             data-semantic-role="multiplication"
+            data-semantic-speech="x asterisk y"
             data-semantic-type="infixop"
             id="p3">
          <mi data-semantic-font="italic"

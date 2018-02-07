@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -43,9 +44,6 @@ public class LaTeXMLConverterTest {
         assertThat(serviceResponse.getResult(), equalTo(expected));
     }
 
-    /**
-     * Test works with http://gw125.iu.xsede.org:8888
-     */
     @Test
     public void convertLatexmlService() throws Exception {
         // default configuration for the test in json (with DRMF stylesheet)
@@ -62,9 +60,6 @@ public class LaTeXMLConverterTest {
         assertThat(serviceResponse.getResult(), equalTo(expected));
     }
 
-    /**
-     * Test works with http://gw125.iu.xsede.org:8888
-     */
     @Test
     public void convertURIEncoding() throws Exception {
         // default configuration for the test in json (with DRMF stylesheet)
@@ -82,9 +77,22 @@ public class LaTeXMLConverterTest {
     }
 
     /**
-     * Test works with http://gw125.iu.xsede.org:8888
+     * @Ignore https://drmf-latexml.wmflabs.org answers with
+     * LaTeXMLServiceResponse:
+     * statusCode: 2
+     * status: 1 error; 1 undefined macro[\Int]
+     * No obvious problems
+     * log:
+     * Error:undefined:\Int The token T_CS[\Int] is not defined.
+     * at Literal String \EulerGamm; line 1 col 20
+     * Defining it now as <ltx:ERROR/>
+     * In Core::Stomach[@0x7feb31554930] at Literal String \EulerGamm; line 1 col 20
+     * <= Core::Definition::Constructor[\(] <= Core::Stomach[@0x7feb31554930] <= Core::Definition::Constructor[\begin{... <= ...
+     *
+     * Before 10.1.2018 the server transformed all elements. What happened?
      */
     @Test
+    @Ignore("ignore until problem is cleared")
     public void convertLatexmlService2() throws Exception {
         // default configuration for the test in json (with DRMF stylesheet)
         LateXMLConfig lateXMLConfig = LateXMLConfig.getDefaultConfiguration().setUrl(HTTP_LATEXML_TEST);
