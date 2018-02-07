@@ -43,9 +43,6 @@ public class LaTeXMLConverterTest {
         assertThat(serviceResponse.getResult(), equalTo(expected));
     }
 
-    /**
-     * Test works with http://gw125.iu.xsede.org:8888
-     */
     @Test
     public void convertLatexmlService() throws Exception {
         // default configuration for the test in json (with DRMF stylesheet)
@@ -62,9 +59,6 @@ public class LaTeXMLConverterTest {
         assertThat(serviceResponse.getResult(), equalTo(expected));
     }
 
-    /**
-     * Test works with http://gw125.iu.xsede.org:8888
-     */
     @Test
     public void convertURIEncoding() throws Exception {
         // default configuration for the test in json (with DRMF stylesheet)
