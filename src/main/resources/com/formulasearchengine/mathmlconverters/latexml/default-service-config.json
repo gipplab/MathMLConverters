@@ -20,6 +20,7 @@
       "amssymb.sty",
       "eucal.sty",
       "DLMFmath.sty",
+      "DRMFfcns.sty",
       "[dvipsnames]xcolor.sty",
       "url.sty",
       "hyperref.sty",
