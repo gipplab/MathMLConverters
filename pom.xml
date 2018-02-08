@@ -7,7 +7,7 @@
     <groupId>com.formulasearchengine</groupId>
     <artifactId>mathmlconverters</artifactId>
     <url>https://github.com/ag-gipp/MathMLConverters</url>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <name>MathML Converters</name>
     <description>Collection of utilities and service calls to convert from various input formats to MathML</description>
