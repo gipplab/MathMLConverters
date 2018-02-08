@@ -6,6 +6,7 @@
 
     <groupId>com.formulasearchengine</groupId>
     <artifactId>mathmlconverters</artifactId>
+    <url>https://github.com/ag-gipp/MathMLConverters</url>
     <version>1.0.0</version>
 
     <name>MathML Converters</name>
@@ -22,6 +23,12 @@
         <developer>
             <name>Vincent Stange</name>
             <email>vinc.sohn@gmail.com</email>
+            <organization>Universität Konstanz</organization>
+            <organizationUrl>http://www.uni.kn</organizationUrl>
+        </developer>
+        <developer>
+            <name>Andre Greiner-Petter</name>
+            <email>andre.greiner-petter@uni-konstanz.de</email>
             <organization>Universität Konstanz</organization>
             <organizationUrl>http://www.uni.kn</organizationUrl>
         </developer>
