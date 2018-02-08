@@ -21,6 +21,12 @@
 
     <developers>
         <developer>
+            <name>Moritz Schubotz</name>
+            <email>wiki@physikerwelt.de</email>
+            <organization>TU Berlin</organization>
+            <organizationUrl>http://www.tu-berlin.de</organizationUrl>
+        </developer>
+        <developer>
             <name>Vincent Stange</name>
             <email>vinc.sohn@gmail.com</email>
             <organization>Universität Konstanz</organization>
